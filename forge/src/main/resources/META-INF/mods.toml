@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[45,)"
+#issueTrackerURL = ""
+license = "All Rights Reserved"
+
+[[mods]]
+modId = "minemetrics"
+version = "${version}"
+displayName = "MineMetrics"
+authors = ""
+description = '''
+
+'''
+#logoFile = ""
+
+[[dependencies.minemetrics]]
+modId = "forge"
+mandatory = true
+versionRange = "[45,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.minemetrics]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.4,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.minemetrics]]
+modId = "architectury"
+mandatory = true
+versionRange = "[8.2.91,)"
+ordering = "AFTER"
+side = "BOTH"

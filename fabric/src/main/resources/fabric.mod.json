@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "minemetrics",
+  "version": "${version}",
+  "name": "MineMetrics",
+  "description": "",
+  "authors": [
+    ""
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "assets/minemetrics/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.zeydie.minemetrics.MineMetricsFabric"
+    ],
+    "client": []
+  },
+  "mixins": [
+    "minemetrics.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "~1.19.4",
+    "java": ">=17",
+    "architectury": "*",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
