@@ -47,7 +47,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: backend/golang
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             ghcr.io/${{ steps.meta.outputs.repo-name }}:go-${{ steps.meta.outputs.version }}
@@ -55,4 +55,4 @@ jobs:
           build-args: |
             JAR_FILE=${{ steps.meta.outputs.jar-name }}
             JAVA_VERSION=${{ steps.meta.outputs.java-version }}
-          file: backend/golang/Dockerfile
+          file: Dockerfile
