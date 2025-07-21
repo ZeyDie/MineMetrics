@@ -27,7 +27,7 @@ RUN adduser -D -h /home/container container
 USER container
 WORKDIR /home/container
 
-COPY --from=builder --chown=container:container /workspace/bin/api /home/container/api
+COPY --from=builder --chown=container:container /workspace/bin/api /home/api
 
 COPY --chown=container:container entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
