@@ -29,7 +29,7 @@ WORKDIR /home/container
 
 COPY --from=builder --chown=container:container /workspace/bin/api /home/container/api
 
-COPY --chown=container:container entrypoint.sh /entrypoint.sh
+COPY --chown=container:container ./backend/golang/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 CMD ["/bin/bash", "/entrypoint.sh"]
