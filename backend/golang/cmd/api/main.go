@@ -7,9 +7,13 @@ import (
 	"os"
 )
 
+var Version = "dev"
+
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
+
+	logger.Info("Starting application", "version", Version)
 
 	cfg, err := config.Load()
 
