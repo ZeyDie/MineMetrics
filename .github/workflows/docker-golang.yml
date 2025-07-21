@@ -53,6 +53,5 @@ jobs:
             ghcr.io/${{ steps.meta.outputs.repo-name }}:go-${{ steps.meta.outputs.version }}
             ghcr.io/${{ steps.meta.outputs.repo-name }}:go-latest
           build-args: |
-            JAR_FILE=${{ steps.meta.outputs.jar-name }}
-            JAVA_VERSION=${{ steps.meta.outputs.java-version }}
+            VERSION=${{ steps.meta.outputs.version }}
           file: ./backend/golang/Dockerfile
