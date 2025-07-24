@@ -1,14 +1,13 @@
 package database
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
-	"minemetrics_golang/internal/loggers"
-
+	"minemetrics_golang/internal/database/entity"
 	"time"
 
 	"minemetrics_golang/internal/config"
+	"minemetrics_golang/internal/systemlog"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -53,9 +52,6 @@ func InitDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
 		return nil, fmt.Errorf("Unsupported database driver: %s", sqlConfig.Driver)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	connect, err := gorm.Open(
 		gormDialector,
 		gormConfig,
@@ -79,14 +75,19 @@ func InitDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
 	database.SetMaxIdleConns(sqlConfig.MaxIdleConns)
 	database.SetConnMaxLifetime(connMaxLifetime)
 
-	pingCtx, pingCancel := context.WithTimeout(ctx, 5*time.Second)
-	defer pingCancel()
-
-	if err := database.PingContext(pingCtx); err != nil {
+	if err := database.Ping(); err != nil {
 		return nil, fmt.Errorf("Failed to ping database: %v\n", err)
 	}
 
 	slog.Info("Database connection established successfully")
+
+	connect.AutoMigrate(
+		&entity.ClientEntity{},
+		//TODO Auto migrate in entities func
+		&entity.GPU{},
+		&entity.ChunkPos{},
+		//&entity.ServerEntity{},
+	)
 
 	Connection = connect
 
@@ -96,7 +97,7 @@ func InitDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
 func initGormConfig() *gorm.Config {
 	var logMode logger.LogLevel
 
-	switch loggers.GetLevel() {
+	switch systemlog.GetLevel() {
 	case slog.LevelInfo:
 		logMode = logger.Info
 	case slog.LevelWarn:

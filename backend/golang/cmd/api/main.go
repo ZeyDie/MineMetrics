@@ -4,15 +4,15 @@ import (
 	"log/slog"
 	"minemetrics_golang/internal/config"
 	"minemetrics_golang/internal/database"
-	"minemetrics_golang/internal/loggers"
 	"minemetrics_golang/internal/server"
+	"minemetrics_golang/internal/systemlog"
 	"os"
 )
 
 var Version = "dev"
 
 func main() {
-	loggers.Init(Version)
+	systemlog.Init(Version)
 
 	slog.Info("Starting application", "version", Version)
 

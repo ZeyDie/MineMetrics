@@ -1,8 +1,20 @@
-package model
+package dto
 
-type ClientRequest struct {
-	Environment string `json:"environment"`
-	OS          struct {
+import (
+	"github.com/go-viper/mapstructure/v2"
+	"minemetrics_golang/internal/models"
+)
+
+func ClientToDTO(request *models.Request) (*ClientDTO, error) {
+	var clientDTO ClientDTO
+
+	err := mapstructure.Decode(request, &clientDTO)
+
+	return &clientDTO, err
+}
+
+type ClientDTO struct {
+	OS struct {
 		Bitness int    `json:"bitness"`
 		Name    string `json:"name"`
 	} `json:"os"`

@@ -2,7 +2,7 @@ package responses
 
 import (
 	"encoding/json"
-	"minemetrics_golang/internal/model"
+	"minemetrics_golang/internal/models"
 	"net/http"
 )
 
@@ -17,7 +17,7 @@ func Success(responseWriter http.ResponseWriter, message string) {
 	Response(
 		responseWriter,
 		http.StatusOK,
-		model.Response{
+		models.Response{
 			Status:  "success",
 			Message: message,
 		},
@@ -28,14 +28,14 @@ func Error(responseWriter http.ResponseWriter, statusCode int, message string) {
 	Response(
 		responseWriter,
 		statusCode,
-		model.Response{
+		models.Response{
 			Status:  "error",
 			Message: message,
 		},
 	)
 }
 
-func Response(responseWriter http.ResponseWriter, statusCode int, reponse model.Response) {
+func Response(responseWriter http.ResponseWriter, statusCode int, reponse models.Response) {
 	JSON(responseWriter, statusCode, reponse)
 }
 

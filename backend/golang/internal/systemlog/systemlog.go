@@ -1,4 +1,4 @@
-package loggers
+package systemlog
 
 import (
 	"log/slog"
