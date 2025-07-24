@@ -3,6 +3,8 @@ package main
 import (
 	"log/slog"
 	"minemetrics_golang/internal/config"
+	"minemetrics_golang/internal/database"
+	"minemetrics_golang/internal/loggers"
 	"minemetrics_golang/internal/server"
 	"os"
 )
@@ -10,25 +12,34 @@ import (
 var Version = "dev"
 
 func main() {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
-	slog.SetDefault(logger)
+	loggers.Init(Version)
 
-	logger.Info("Starting application", "version", Version)
+	slog.Info("Starting application", "version", Version)
 
-	cfg, err := config.Load()
+	config, sqlConfig, err := config.Load()
 
 	if err != nil {
-		logger.Error("Failed to load config", "error", err)
+		slog.Error(
+			"Failed to load config",
+			"error",
+			err,
+		)
 		os.Exit(1)
 	}
 
-	logger.Info("Loaded configuration",
-		"port", cfg.Port,
-		"env", cfg.Env,
+	slog.Info(
+		"Loaded configuration",
+		"port", config.Port,
 	)
 
-	if err := server.Run(cfg, logger); err != nil {
-		logger.Error("Server error", "error", err)
+	database.InitDB(sqlConfig)
+
+	if err := server.Run(config); err != nil {
+		slog.Error(
+			"Server error",
+			"error",
+			err,
+		)
 		os.Exit(1)
 	}
 }

@@ -14,17 +14,29 @@ func JSON(responseWriter http.ResponseWriter, status int, data interface{}) {
 }
 
 func Success(responseWriter http.ResponseWriter, message string) {
-	JSON(responseWriter, http.StatusOK, model.Response{
-		Status:  "success",
-		Message: message,
-	})
+	Response(
+		responseWriter,
+		http.StatusOK,
+		model.Response{
+			Status:  "success",
+			Message: message,
+		},
+	)
 }
 
 func Error(responseWriter http.ResponseWriter, statusCode int, message string) {
-	JSON(responseWriter, statusCode, model.Response{
-		Status:  "error",
-		Message: message,
-	})
+	Response(
+		responseWriter,
+		statusCode,
+		model.Response{
+			Status:  "error",
+			Message: message,
+		},
+	)
+}
+
+func Response(responseWriter http.ResponseWriter, statusCode int, reponse model.Response) {
+	JSON(responseWriter, statusCode, reponse)
 }
 
 func DecodeJSON(request *http.Request, data interface{}) error {

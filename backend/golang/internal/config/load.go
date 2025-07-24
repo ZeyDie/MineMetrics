@@ -6,16 +6,20 @@ import (
 	"log/slog"
 )
 
-func Load() (*Config, error) {
+func Load() (*Config, *SQLConfig, error) {
 	if err := godotenv.Load(); err != nil {
 		slog.Info("No .env file found, using environment variables")
 	}
 
-	cfg := new(Config)
-
-	if err := env.Parse(cfg); err != nil {
-		return nil, err
+	config := new(Config)
+	if err := env.Parse(config); err != nil {
+		return nil, nil, err
 	}
 
-	return cfg, nil
+	sqlConfig := new(SQLConfig)
+	if err := env.Parse(sqlConfig); err != nil {
+		return nil, nil, err
+	}
+
+	return config, sqlConfig, nil
 }

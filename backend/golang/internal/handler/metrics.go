@@ -9,22 +9,22 @@ import (
 )
 
 type MetricHandler struct {
-	logger *slog.Logger
 }
 
-func NewMetricHandler(logger *slog.Logger) *MetricHandler {
-	return &MetricHandler{logger: logger}
+func NewMetricHandler() *MetricHandler {
+	return &MetricHandler{}
 }
 
 func (metricHandler *MetricHandler) HandlePost(responseWriter http.ResponseWriter, request *http.Request) {
-	var req model.ClientRequest
+	var clientRequest model.ClientRequest
 
-	if err := responses.DecodeJSON(request, &req); err != nil {
+	if err := responses.DecodeJSON(request, &clientRequest); err != nil {
 		responses.Error(responseWriter, http.StatusBadRequest, "Invalid request payload")
+		slog.Error("POST", "err", err)
 		return
 	}
 
-	metricHandler.logger.Info("POST", "data", req)
+	slog.Info("POST", "clientRequest", clientRequest)
 
 	responses.Success(responseWriter, "")
 }

@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log/slog"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -11,15 +10,14 @@ import (
 	"minemetrics_golang/internal/handler"
 )
 
-func Run(cfg *config.Config, logger *slog.Logger) error {
+func Run(cfg *config.Config) error {
 	router := chi.NewRouter()
 
-	// Middleware
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
+	router.Use(middleware.AllowContentType("application/json"))
 
-	// Handlers
-	metricsHandler := handler.NewMetricHandler(logger)
+	metricsHandler := handler.NewMetricHandler()
 
 	router.Post("/metrics", metricsHandler.HandlePost)
 
