@@ -1,6 +1,8 @@
 package metrics
 
 import (
+	"errors"
+	"gorm.io/gorm"
 	"log/slog"
 	"minemetrics_golang/internal/database"
 	"minemetrics_golang/internal/database/entity"
@@ -50,15 +52,22 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 
 	transaction := database.GetTransaction()
 
-	userEntity := transaction.Find(&clientEntity, "user_id = ?", clientRequest.UserID)
+	result := transaction.Where("user_id = ?", clientRequest.UserID).First(&clientEntity)
 
-	if userEntity != nil {
-		userEntity.Updates(&clientEntity)
+	if result.RowsAffected > 0 {
+		result.Updates(&clientEntity)
 	} else {
-		if err := transaction.Create(&clientEntity).Error; err != nil {
-			slog.Error("Failed to insert client data", "error", err)
-			transaction.Rollback()
-			return err
+		resultError := result.Error
+
+		if errors.Is(resultError, gorm.ErrRecordNotFound) {
+			if err := transaction.Create(&clientEntity).Error; err != nil {
+				slog.Error("Failed to insert client data", "error", err)
+				transaction.Rollback()
+				return err
+			}
+		} else {
+			slog.Error("Failed to insert client data", "resultError", resultError)
+			return resultError
 		}
 	}
 
