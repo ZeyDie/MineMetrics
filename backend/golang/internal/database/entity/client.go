@@ -9,24 +9,30 @@ import (
 type ClientEntity struct {
 	gorm.Model
 
-	UserID             uuid.UUID
-	OSBitness          int8
-	OSName             string
-	CPUThreads         uint8
-	CPUCores           uint8
-	RAMTotal           uint64
-	RAMAvailable       uint64
-	FPS                uint16
-	ViewDistance       uint8
-	EntityCount        uint16
-	ParticleCount      uint32
+	UserID uuid.UUID
+
+	OSBitness    int8
+	OSName       string
+	CPUThreads   uint8
+	CPUCores     uint8
+	RAMTotal     uint64
+	RAMAvailable uint64
+
+	FPS           uint16
+	ViewDistance  uint8
+	EntityCount   uint16
+	ParticleCount uint32
+
 	DimensionNamespace string
 	DimensionPath      string
 
-	GPUs                 string          `gorm:"type:json" json:"-"`
-	ChunkPositions       string          `gorm:"type:json" json:"-"`
-	GPUsStruct           []GPU           `gorm:"-" json:"gpus_struct"`
-	ChunkPositionsStruct []ChunkPosition `gorm:"-" json:"chunk_positions_struct"`
+	X int16
+	Y int16
+	Z int16
+
+	GPUs           string `gorm:"type:json" json:"-"`
+	ChunkPositions string `gorm:"type:json" json:"-"`
+	GPUsStruct     []GPU  `gorm:"-" json:"gpus_struct"`
 }
 
 type GPU struct {
@@ -37,11 +43,6 @@ type GPU struct {
 	VRAM        uint64
 }
 
-type ChunkPosition struct {
-	X int16
-	Z int16
-}
-
 func (clientEntity *ClientEntity) BeforeSave(transaction *gorm.DB) error {
 	gpusBytes, err := json.Marshal(clientEntity.GPUsStruct)
 	if err != nil {
@@ -50,26 +51,12 @@ func (clientEntity *ClientEntity) BeforeSave(transaction *gorm.DB) error {
 
 	clientEntity.GPUs = string(gpusBytes)
 
-	chunksBytes, err := json.Marshal(clientEntity.ChunkPositionsStruct)
-	if err != nil {
-		return err
-	}
-
-	clientEntity.ChunkPositions = string(chunksBytes)
-
 	return nil
 }
 
 func (clientEntity *ClientEntity) AfterFind(transaction *gorm.DB) error {
 	if clientEntity.GPUs != "" {
 		err := json.Unmarshal([]byte(clientEntity.GPUs), &clientEntity.GPUsStruct)
-		if err != nil {
-			return err
-		}
-	}
-
-	if clientEntity.ChunkPositions != "" {
-		err := json.Unmarshal([]byte(clientEntity.ChunkPositions), &clientEntity.ChunkPositionsStruct)
 		if err != nil {
 			return err
 		}

@@ -27,6 +27,10 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 
 		DimensionNamespace: clientRequest.Dimension.Namespace,
 		DimensionPath:      clientRequest.Dimension.Path,
+
+		X: clientRequest.Position.X,
+		Y: clientRequest.Position.Y,
+		Z: clientRequest.Position.Z,
 	}
 
 	for _, gpu := range clientRequest.GPUs.GPUs {
@@ -38,20 +42,6 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 				Vendor:      gpu.Vendor,
 				VersionInfo: gpu.VersionInfo,
 				VRAM:        gpu.VRAM,
-			},
-		)
-	}
-
-	for _, chunk := range clientRequest.ChunkPosList {
-		if chunk.X == 0 && chunk.Z == 0 {
-			continue
-		}
-
-		clientEntity.ChunkPositionsStruct = append(
-			clientEntity.ChunkPositionsStruct,
-			entity.ChunkPosition{
-				X: chunk.X,
-				Z: chunk.Z,
 			},
 		)
 	}

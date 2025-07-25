@@ -30,7 +30,12 @@ type ClientRequest struct {
 		Namespace string `json:"namespace" validate:"required"`
 		Path      string `json:"path" validate:"required"`
 	} `json:"dimension"`
-	ChunkPosList []ChunkPos `json:"chunkPosList" validate:"dive"`
+
+	Position struct {
+		X int16 `json:"x" validate:"required"`
+		Y int16 `json:"y" validate:"required"`
+		Z int16 `json:"z" validate:"required"`
+	} `json:"position"`
 }
 
 type GPU struct {
@@ -39,9 +44,4 @@ type GPU struct {
 	Vendor      string `json:"vendor" validate:"required"`
 	VersionInfo string `json:"versionInfo" validate:"required"`
 	VRAM        uint64 `json:"vram" validate:"min=0"`
-}
-
-type ChunkPos struct {
-	X int16 `json:"x" validate:"required"`
-	Z int16 `json:"z" validate:"required"`
 }
