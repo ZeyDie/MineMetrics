@@ -51,6 +51,6 @@ public final class ClientMetricData extends MetricData {
     public boolean isAvialable() {
         val minecraft = ClientMetricAPI.getMinecraft();
 
-        return !minecraft.isSingleplayer() && !minecraft.isPaused() && minecraft.isWindowActive() && !this.chunkPosList.isEmpty();
+        return !minecraft.isSingleplayer() && !minecraft.isPaused() && minecraft.isWindowActive();
     }
 }

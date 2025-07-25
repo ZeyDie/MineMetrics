@@ -32,7 +32,7 @@ public final class ClientMetricAPI {
     }
 
     public static int getViewDistance() {
-        var options = getMinecraft().options;
+        @Nullable val options = getMinecraft().options;
 
         return options == null ? 0 : options.renderDistance().get();
     }
@@ -50,12 +50,12 @@ public final class ClientMetricAPI {
     }
 
     public static @NotNull Vec3i getPosition() {
-        val position = getMinecraft().player.position();
+        @NotNull val position = getMinecraft().player.blockPosition();
 
         return new Vec3i(
-                (int) position.x(),
-                (int) position.y(),
-                (int) position.z()
+                position.getX(),
+                position.getY(),
+                position.getZ()
         );
     }
 
