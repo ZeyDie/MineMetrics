@@ -1,7 +1,6 @@
 package metrics
 
 import (
-	"fmt"
 	"log/slog"
 	"minemetrics_golang/internal/database"
 	"minemetrics_golang/internal/database/entity"
@@ -36,10 +35,6 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 		ParticleCount: clientRequest.ParticleCount,
 	}
 
-	if positionEntity.X == 0 && positionEntity.Y == 0 && positionEntity.Z == 0 {
-		return fmt.Errorf("Invalid position %f %f %f", positionEntity.X, positionEntity.Y, positionEntity.Z)
-	}
-
 	for _, gpu := range clientRequest.GPUs.GPUs {
 		clientEntity.GPUsStruct = append(
 			clientEntity.GPUsStruct,
@@ -67,10 +62,12 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 		}
 	}
 
-	if err := transaction.Create(&positionEntity).Error; err != nil {
-		slog.Error("Failed to insert positions", "error", err)
-		transaction.Rollback()
-		return err
+	if positionEntity.X != 0 && positionEntity.Y != 0 && positionEntity.Z != 0 {
+		if err := transaction.Create(&positionEntity).Error; err != nil {
+			slog.Error("Failed to insert positions", "error", err)
+			transaction.Rollback()
+			return err
+		}
 	}
 
 	if err := transaction.Commit().Error; err != nil {
