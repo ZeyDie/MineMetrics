@@ -43,6 +43,10 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 	}
 
 	for _, chunk := range clientRequest.ChunkPosList {
+		if chunk.X == 0 && chunk.Z == 0 {
+			continue
+		}
+
 		clientEntity.ChunkPositions = append(
 			clientEntity.ChunkPositions,
 			entity.ChunkPosition{
