@@ -30,8 +30,8 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 	}
 
 	for _, gpu := range clientRequest.GPUs.GPUs {
-		clientEntity.GPUs = append(
-			clientEntity.GPUs,
+		clientEntity.GPUsStruct = append(
+			clientEntity.GPUsStruct,
 			entity.GPU{
 				Name:        gpu.Name,
 				DeviceID:    gpu.DeviceID,
@@ -47,8 +47,8 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 			continue
 		}
 
-		clientEntity.ChunkPositions = append(
-			clientEntity.ChunkPositions,
+		clientEntity.ChunkPositionsStruct = append(
+			clientEntity.ChunkPositionsStruct,
 			entity.ChunkPosition{
 				X: chunk.X,
 				Z: chunk.Z,

@@ -23,10 +23,10 @@ type ClientEntity struct {
 	DimensionNamespace string
 	DimensionPath      string
 
-	GPUsJSON       string          `gorm:"type:json" json:"-"`
-	ChunksJSON     string          `gorm:"type:json" json:"-"`
-	GPUs           []GPU           `gorm:"-" json:"gpus"`
-	ChunkPositions []ChunkPosition `gorm:"-" json:"chunk_positions"`
+	GPUs                 string          `gorm:"type:json" json:"-"`
+	ChunkPositions       string          `gorm:"type:json" json:"-"`
+	GPUsStruct           []GPU           `gorm:"-" json:"gpus_struct"`
+	ChunkPositionsStruct []ChunkPosition `gorm:"-" json:"chunk_positions_struct"`
 }
 
 type GPU struct {
@@ -43,33 +43,33 @@ type ChunkPosition struct {
 }
 
 func (clientEntity *ClientEntity) BeforeSave(transaction *gorm.DB) error {
-	gpusBytes, err := json.Marshal(clientEntity.GPUs)
+	gpusBytes, err := json.Marshal(clientEntity.GPUsStruct)
 	if err != nil {
 		return err
 	}
 
-	clientEntity.GPUsJSON = string(gpusBytes)
+	clientEntity.GPUs = string(gpusBytes)
 
-	chunksBytes, err := json.Marshal(clientEntity.ChunkPositions)
+	chunksBytes, err := json.Marshal(clientEntity.ChunkPositionsStruct)
 	if err != nil {
 		return err
 	}
 
-	clientEntity.ChunksJSON = string(chunksBytes)
+	clientEntity.ChunkPositions = string(chunksBytes)
 
 	return nil
 }
 
 func (clientEntity *ClientEntity) AfterFind(transaction *gorm.DB) error {
-	if clientEntity.GPUsJSON != "" {
-		err := json.Unmarshal([]byte(clientEntity.GPUsJSON), &clientEntity.GPUs)
+	if clientEntity.GPUs != "" {
+		err := json.Unmarshal([]byte(clientEntity.GPUs), &clientEntity.GPUsStruct)
 		if err != nil {
 			return err
 		}
 	}
 
-	if clientEntity.ChunksJSON != "" {
-		err := json.Unmarshal([]byte(clientEntity.ChunksJSON), &clientEntity.ChunkPositions)
+	if clientEntity.ChunkPositions != "" {
+		err := json.Unmarshal([]byte(clientEntity.ChunkPositions), &clientEntity.ChunkPositionsStruct)
 		if err != nil {
 			return err
 		}
