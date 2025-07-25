@@ -117,7 +117,7 @@ func initGormConfig() *gorm.Config {
 	case slog.LevelError:
 		logMode = logger.Error
 	default:
-		logMode = logger.Info
+		logMode = logger.Warn
 	}
 
 	gormLogger := logger.Default.LogMode(logMode)

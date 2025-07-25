@@ -7,8 +7,7 @@ import (
 	"net/http"
 )
 
-type ServerHandler struct {
-}
+type ServerHandler struct{}
 
 func NewServerHandler() *ServerHandler {
 	return &ServerHandler{}
