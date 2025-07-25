@@ -18,7 +18,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public final class ClientLevelInfo extends Levelnfo<ClientLevel> {
     public ClientLevelInfo() {
-        super(Minecraft.getInstance().level);
+        super(ClientMetricAPI.getMinecraft().level);
     }
 
     @Override
@@ -33,7 +33,7 @@ public final class ClientLevelInfo extends Levelnfo<ClientLevel> {
 
     @Override
     public int getParticleCount() {
-        return this.isValid() ? Integer.parseInt(Minecraft.getInstance().particleEngine.countParticles()) : 0;
+        return this.isValid() ? Integer.parseInt(ClientMetricAPI.getMinecraft().particleEngine.countParticles()) : 0;
     }
 
     @Override

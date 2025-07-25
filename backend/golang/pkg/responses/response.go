@@ -2,9 +2,13 @@ package responses
 
 import (
 	"encoding/json"
-	"minemetrics_golang/internal/models"
 	"net/http"
 )
+
+type StatusResponse struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
 
 func JSON(responseWriter http.ResponseWriter, status int, data interface{}) {
 	responseWriter.Header().Set("Content-Type", "application/json")
@@ -17,7 +21,7 @@ func Success(responseWriter http.ResponseWriter, message string) {
 	Response(
 		responseWriter,
 		http.StatusOK,
-		models.Response{
+		StatusResponse{
 			Status:  "success",
 			Message: message,
 		},
@@ -28,14 +32,14 @@ func Error(responseWriter http.ResponseWriter, statusCode int, message string) {
 	Response(
 		responseWriter,
 		statusCode,
-		models.Response{
+		StatusResponse{
 			Status:  "error",
 			Message: message,
 		},
 	)
 }
 
-func Response(responseWriter http.ResponseWriter, statusCode int, reponse models.Response) {
+func Response(responseWriter http.ResponseWriter, statusCode int, reponse StatusResponse) {
 	JSON(responseWriter, statusCode, reponse)
 }
 

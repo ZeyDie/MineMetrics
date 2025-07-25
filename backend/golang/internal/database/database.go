@@ -16,40 +16,54 @@ import (
 )
 
 var Connection *gorm.DB
+var cfg *config.SQLConfig
 
-func InitDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
+func NewDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
+	cfg = sqlConfig
+
+	connection, err := initDB()
+
+	if err != nil {
+		slog.Error("Failed to initialize database", "error", err)
+		return nil, err
+	}
+
+	return connection, err
+}
+
+func initDB() (*gorm.DB, error) {
 	slog.Info("Initializing database connection...")
 
 	gormConfig := initGormConfig()
 	var gormDialector gorm.Dialector
 
-	switch sqlConfig.Driver {
+	switch cfg.Driver {
 	case "postgres", "postgresql":
 		gormDialector = postgres.Open(
 			fmt.Sprintf(
 				"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s TimeZone=%s",
-				sqlConfig.Host,
-				sqlConfig.Port,
-				sqlConfig.User,
-				sqlConfig.Password,
-				sqlConfig.DBName,
-				sqlConfig.SSL,
-				sqlConfig.TimeZone,
+				cfg.Host,
+				cfg.Port,
+				cfg.User,
+				cfg.Password,
+				cfg.DBName,
+				cfg.SSL,
+				cfg.TimeZone,
 			),
 		)
 	case "mysql", "mariadb":
 		gormDialector = mysql.Open(
 			fmt.Sprintf(
 				"%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-				sqlConfig.User,
-				sqlConfig.Password,
-				sqlConfig.Host,
-				sqlConfig.Port,
-				sqlConfig.DBName,
+				cfg.User,
+				cfg.Password,
+				cfg.Host,
+				cfg.Port,
+				cfg.DBName,
 			),
 		)
 	default:
-		return nil, fmt.Errorf("Unsupported database driver: %s", sqlConfig.Driver)
+		return nil, fmt.Errorf("Unsupported database driver: %s", cfg.Driver)
 	}
 
 	connect, err := gorm.Open(
@@ -65,14 +79,14 @@ func InitDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
 		return nil, fmt.Errorf("Failed to get database instance: %v\n", err)
 	}
 
-	connMaxLifetime, err := time.ParseDuration(sqlConfig.MaxConnLifetime)
+	connMaxLifetime, err := time.ParseDuration(cfg.MaxConnLifetime)
 	if err != nil {
 		slog.Warn("Invalid MaxConnLifetime, using default", "error", err)
 		connMaxLifetime = time.Hour
 	}
 
-	database.SetMaxOpenConns(sqlConfig.MaxOpenConns)
-	database.SetMaxIdleConns(sqlConfig.MaxIdleConns)
+	database.SetMaxOpenConns(cfg.MaxOpenConns)
+	database.SetMaxIdleConns(cfg.MaxIdleConns)
 	database.SetConnMaxLifetime(connMaxLifetime)
 
 	if err := database.Ping(); err != nil {
@@ -85,11 +99,9 @@ func InitDB(sqlConfig *config.SQLConfig) (*gorm.DB, error) {
 		&entity.ClientEntity{},
 		//TODO Auto migrate in entities func
 		&entity.GPU{},
-		&entity.ChunkPos{},
+		&entity.ChunkPosition{},
 		//&entity.ServerEntity{},
 	)
-
-	Connection = connect
 
 	return connect, nil
 }
@@ -116,5 +128,28 @@ func initGormConfig() *gorm.Config {
 }
 
 func GetConnection() *gorm.DB {
+	if Connection == nil || Connection.Error != nil {
+		connection, err := initDB()
+
+		Connection = connection
+
+		if err != nil {
+			slog.Error("Failed to initialize database", "error", err)
+			panic(err)
+		}
+	}
+
 	return Connection
+}
+
+func GetTransaction() *gorm.DB {
+	transaction := GetConnection().Begin()
+
+	defer func() {
+		if recove := recover(); recove != nil {
+			transaction.Rollback()
+		}
+	}()
+
+	return transaction
 }

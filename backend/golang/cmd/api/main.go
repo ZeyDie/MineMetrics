@@ -32,7 +32,7 @@ func main() {
 		"port", config.Port,
 	)
 
-	database.InitDB(sqlConfig)
+	database.NewDB(sqlConfig)
 
 	if err := server.Run(config); err != nil {
 		slog.Error(

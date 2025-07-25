@@ -1,7 +1,7 @@
 package metrics
 
-import "minemetrics_golang/internal/models/dto"
+import "minemetrics_golang/internal/request"
 
-func InsertServerData(serverDTP dto.ServerDTO) {
+func InsertServerData(serverRequest request.ServerRequest) {
 
 }

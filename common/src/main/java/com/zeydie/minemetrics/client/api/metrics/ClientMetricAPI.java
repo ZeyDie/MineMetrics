@@ -8,14 +8,23 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 public final class ClientMetricAPI {
+    public static @NotNull Minecraft getMinecraft() {
+        return Minecraft.getInstance();
+    }
+
+    public static @NotNull UUID getUserId() {
+        return getMinecraft().getUser().getProfileId();
+    }
+
     public static int getFps() {
-        return Minecraft.getInstance().getFps();
+        return getMinecraft().getFps();
     }
 
     public static int getViewDistance() {
-        return Minecraft.getInstance().options.renderDistance().get();
+        return getMinecraft().options.renderDistance().get();
     }
 
     public static @Nullable ResourceLocation getDimension() {

@@ -18,11 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public final class ClientMetricData extends MetricData {
-    private final @NotNull MineMetrics.Environment environment = MineMetrics.Environment.CLIENT;
+    private final @NotNull UUID userId = ClientMetricAPI.getUserId();
 
     private final @Nullable OSData os = OshiAPI.getOs();
     private final @Nullable CpuData cpu = OshiAPI.getCpu();
@@ -44,7 +45,7 @@ public final class ClientMetricData extends MetricData {
 
     @Override
     public boolean isAvialable() {
-        val minecraft = Minecraft.getInstance();
+        val minecraft = ClientMetricAPI.getMinecraft();
 
         return !minecraft.isSingleplayer() && !minecraft.isPaused() && minecraft.isWindowActive() && !this.chunkPosList.isEmpty();
     }
