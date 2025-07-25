@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Slf4j
 public abstract class MetricScheduledService<T extends MetricData> extends AbstractScheduledService {
@@ -28,21 +29,27 @@ public abstract class MetricScheduledService<T extends MetricData> extends Abstr
                 @NotNull val json = metricData.toJson();
 
                 if (metricData.isAvialable()) {
-                    if (config.isDebug())
-                        log.info("Data {}", json);
-                    
+                    @NotNull val request = HttpRequest.newBuilder()
+                            .uri(URI.create(config.getEndpoint()))
+                            .header("Content-Type", MediaType.JSON_UTF_8.toString())
+                            .POST(HttpRequest.BodyPublishers.ofString(json))
+                            .build();
+
+                    if (config.isDebug()) {
+                        log.info("Request {}\n{}", request, json);
+                        log.info("Request Headers {}", request.headers());
+                    }
+
                     @NotNull val response = MineMetrics.getHttpClient()
                             .sendAsync(
-                                    HttpRequest.newBuilder()
-                                            .uri(URI.create(config.getEndpoint()))
-                                            .header("Content-Type", MediaType.JSON_UTF_8.type())
-                                            .POST(HttpRequest.BodyPublishers.ofString(json))
-                                            .build(),
+                                    request,
                                     HttpResponse.BodyHandlers.ofString()
-                            ).get();
-
-                    if (config.isDebug())
-                        log.info("Response {}", response.body());
+                            ).thenAcceptAsync(
+                                    httpResponse -> {
+                                        if (config.isDebug())
+                                            log.info("Response {}", httpResponse.body());
+                                    }
+                            );
                 }
             } catch (@NotNull final Exception exception) {
                 if (config.isDebug())

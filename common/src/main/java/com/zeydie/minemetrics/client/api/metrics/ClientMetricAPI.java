@@ -24,7 +24,9 @@ public final class ClientMetricAPI {
     }
 
     public static int getViewDistance() {
-        return getMinecraft().options.renderDistance().get();
+        var options = getMinecraft().options;
+
+        return options == null ? 0 : options.renderDistance().get();
     }
 
     public static @Nullable ResourceLocation getDimension() {
