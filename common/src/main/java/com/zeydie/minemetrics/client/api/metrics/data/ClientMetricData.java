@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.val;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,7 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = false)
 public final class ClientMetricData extends MetricData {
     private final @NotNull UUID userId = ClientMetricAPI.getUserId();
+    private final @NotNull String accessToken = ClientMetricAPI.getAccessToken();
 
     private final @Nullable OSData os = OshiAPI.getOs();
     private final @Nullable CpuData cpu = OshiAPI.getCpu();
@@ -36,6 +39,7 @@ public final class ClientMetricData extends MetricData {
     private final int particleCount = ClientMetricAPI.getParticleCount();
 
     private final @Nullable ResourceLocation dimension = ClientMetricAPI.getDimension();
+    private final @NotNull Vec3i position = ClientMetricAPI.getPosition();
     private final @NotNull List<ChunkPos> chunkPosList = ClientMetricAPI.getChunkPosList();
 
     @Override

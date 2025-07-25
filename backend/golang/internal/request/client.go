@@ -3,7 +3,8 @@ package request
 import "github.com/google/uuid"
 
 type ClientRequest struct {
-	UserID uuid.UUID `json:"userId" validate:"required"`
+	UserID      uuid.UUID `json:"userId" validate:"required"`
+	AccessToken string    `json:"accessToken" validate:"required"`
 
 	OS struct {
 		Bitness int8   `json:"bitness" validate:"required,oneof=32 64"`
