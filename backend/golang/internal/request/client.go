@@ -6,12 +6,12 @@ type ClientRequest struct {
 	UserID uuid.UUID `json:"userId" validate:"required"`
 
 	OS struct {
-		Bitness int    `json:"bitness" validate:"required,oneof=32 64"`
+		Bitness int8   `json:"bitness" validate:"required,oneof=32 64"`
 		Name    string `json:"name" validate:"required"`
 	} `json:"os"`
 	CPU struct {
-		Threads int `json:"threads" validate:"required,min=1"`
-		Cores   int `json:"cores" validate:"required,min=1"`
+		Threads uint8 `json:"threads" validate:"required,min=1"`
+		Cores   uint8 `json:"cores" validate:"required,min=1"`
 	} `json:"cpu"`
 	GPUs struct {
 		GPUs []GPU `json:"gpus" validate:"dive"`
@@ -21,10 +21,10 @@ type ClientRequest struct {
 		AvailableRam uint64 `json:"availableRam"`
 	} `json:"ram"`
 
-	FPS           int `json:"fps" validate:"min=1,max=1000"`
-	ViewDistance  int `json:"viewDistance" validate:"min=2,max=32"`
-	EntityCount   int `json:"entityCount" validate:"min=0"`
-	ParticleCount int `json:"particleCount" validate:"min=0"`
+	FPS           uint16 `json:"fps" validate:"min=1,max=1000"`
+	ViewDistance  uint8  `json:"viewDistance" validate:"min=2,max=32"`
+	EntityCount   uint16 `json:"entityCount" validate:"min=0"`
+	ParticleCount uint32 `json:"particleCount" validate:"min=0"`
 
 	Dimension struct {
 		Namespace string `json:"namespace" validate:"required"`
@@ -42,6 +42,6 @@ type GPU struct {
 }
 
 type ChunkPos struct {
-	X int `json:"x" validate:"required"`
-	Z int `json:"z" validate:"required"`
+	X int16 `json:"x" validate:"required"`
+	Z int16 `json:"z" validate:"required"`
 }
