@@ -1,6 +1,7 @@
 package metrics
 
 import (
+	"fmt"
 	"log/slog"
 	"minemetrics_golang/internal/database"
 	"minemetrics_golang/internal/database/entity"
@@ -31,6 +32,10 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 		X: clientRequest.Position.X,
 		Y: clientRequest.Position.Y,
 		Z: clientRequest.Position.Z,
+	}
+
+	if clientEntity.X == 0 && clientEntity.Y == 0 && clientEntity.Z == 0 {
+		return fmt.Errorf("Invalid position %f %f %f", clientEntity.X, clientEntity.Y, clientEntity.Z)
 	}
 
 	for _, gpu := range clientRequest.GPUs.GPUs {
