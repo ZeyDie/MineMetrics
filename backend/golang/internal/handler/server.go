@@ -20,7 +20,12 @@ func (serverHandler *ServerHandler) HandlePost(responseWriter http.ResponseWrite
 		return
 	}
 
-	metrics.InsertServerData(request)
+	err = metrics.InsertServerData(request)
+
+	if err != nil {
+		responses.Error(responseWriter, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	responses.Success(responseWriter, "")
 }

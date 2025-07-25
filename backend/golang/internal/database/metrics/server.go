@@ -2,6 +2,6 @@ package metrics
 
 import "minemetrics_golang/internal/request"
 
-func InsertServerData(serverRequest request.ServerRequest) {
-
+func InsertServerData(serverRequest request.ServerRequest) error {
+	return nil
 }

@@ -21,7 +21,12 @@ func (clientHandler *ClientHandler) HandlePost(responseWriter http.ResponseWrite
 		return
 	}
 
-	metrics.InsertClientData(request)
+	err = metrics.InsertClientData(request)
+
+	if err != nil {
+		responses.Error(responseWriter, http.StatusBadRequest, err.Error())
+		return
+	}
 
 	responses.Success(responseWriter, "")
 }
