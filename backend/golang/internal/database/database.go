@@ -97,6 +97,7 @@ func initDB() (*gorm.DB, error) {
 
 	connect.AutoMigrate(
 		&entity.ClientEntity{},
+		&entity.PositionEntity{},
 		//TODO Auto migrate in entities func
 		//&entity.ServerEntity{},
 	)
