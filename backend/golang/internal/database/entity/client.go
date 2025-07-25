@@ -18,17 +18,10 @@ type ClientEntity struct {
 	RAMTotal     uint64
 	RAMAvailable uint64
 
-	FPS           uint16
-	ViewDistance  uint8
-	EntityCount   uint16
-	ParticleCount uint32
+	FPS          uint16
+	ViewDistance uint8
 
-	DimensionNamespace string
-	DimensionPath      string
-
-	X int16
-	Y int16
-	Z int16
+	PositionEntity []PositionEntity `gorm:"foreignKey:ClientEntityID"`
 
 	GPUs       string `gorm:"type:json" json:"-"`
 	GPUsStruct []GPU  `gorm:"-" json:"gpus_struct"`
@@ -40,6 +33,22 @@ type GPU struct {
 	Vendor      string
 	VersionInfo string
 	VRAM        uint64
+}
+
+type PositionEntity struct {
+	gorm.Model
+
+	ClientEntityID uint `json:"-"`
+
+	DimensionNamespace string
+	DimensionPath      string
+
+	X int16
+	Y int16
+	Z int16
+
+	EntityCount   uint16
+	ParticleCount uint32
 }
 
 func (clientEntity *ClientEntity) BeforeSave(transaction *gorm.DB) error {

@@ -21,21 +21,23 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 		RAMTotal:     clientRequest.RAM.TotalRam,
 		RAMAvailable: clientRequest.RAM.AvailableRam,
 
-		FPS:           clientRequest.FPS,
-		ViewDistance:  clientRequest.ViewDistance,
-		EntityCount:   clientRequest.EntityCount,
-		ParticleCount: clientRequest.ParticleCount,
-
+		FPS:          clientRequest.FPS,
+		ViewDistance: clientRequest.ViewDistance,
+	}
+	positionEntity := entity.PositionEntity{
 		DimensionNamespace: clientRequest.Dimension.Namespace,
 		DimensionPath:      clientRequest.Dimension.Path,
 
 		X: clientRequest.Position.X,
 		Y: clientRequest.Position.Y,
 		Z: clientRequest.Position.Z,
+
+		EntityCount:   clientRequest.EntityCount,
+		ParticleCount: clientRequest.ParticleCount,
 	}
 
-	if clientEntity.X == 0 && clientEntity.Y == 0 && clientEntity.Z == 0 {
-		return fmt.Errorf("Invalid position %f %f %f", clientEntity.X, clientEntity.Y, clientEntity.Z)
+	if positionEntity.X == 0 && positionEntity.Y == 0 && positionEntity.Z == 0 {
+		return fmt.Errorf("Invalid position %f %f %f", positionEntity.X, positionEntity.Y, positionEntity.Z)
 	}
 
 	for _, gpu := range clientRequest.GPUs.GPUs {
@@ -53,8 +55,20 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 
 	transaction := database.GetTransaction()
 
-	if err := transaction.Create(&clientEntity).Error; err != nil {
-		slog.Error("Failed to insert client data", "error", err)
+	userEntity := transaction.Find(&clientEntity, "user_id = ?", clientRequest.UserID)
+
+	if userEntity != nil {
+		userEntity.Updates(&clientEntity)
+	} else {
+		if err := transaction.Create(&clientEntity).Error; err != nil {
+			slog.Error("Failed to insert client data", "error", err)
+			transaction.Rollback()
+			return err
+		}
+	}
+
+	if err := transaction.Create(&positionEntity).Error; err != nil {
+		slog.Error("Failed to insert positions", "error", err)
 		transaction.Rollback()
 		return err
 	}
