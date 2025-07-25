@@ -23,10 +23,10 @@ type ClientEntity struct {
 	DimensionNamespace string
 	DimensionPath      string
 
-	GPUsJSON       string          `gorm:"type:json"`
-	ChunksJSON     string          `gorm:"type:json"`
-	GPUs           []GPU           `gorm:"-"`
-	ChunkPositions []ChunkPosition `gorm:"-"`
+	GPUsJSON       string          `gorm:"type:json" json:"-"`
+	ChunksJSON     string          `gorm:"type:json" json:"-"`
+	GPUs           []GPU           `gorm:"-" json:"gpus"`
+	ChunkPositions []ChunkPosition `gorm:"-" json:"chunk_positions"`
 }
 
 type GPU struct {
