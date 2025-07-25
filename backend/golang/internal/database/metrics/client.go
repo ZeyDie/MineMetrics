@@ -27,9 +27,6 @@ func InsertClientData(clientRequest request.ClientRequest) error {
 
 		DimensionNamespace: clientRequest.Dimension.Namespace,
 		DimensionPath:      clientRequest.Dimension.Path,
-
-		GPUs:           make([]entity.GPU, 0),
-		ChunkPositions: make([]entity.ChunkPosition, 0),
 	}
 
 	for _, gpu := range clientRequest.GPUs.GPUs {

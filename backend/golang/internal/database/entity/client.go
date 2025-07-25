@@ -43,23 +43,19 @@ type ChunkPosition struct {
 }
 
 func (clientEntity *ClientEntity) BeforeSave(transaction *gorm.DB) error {
-	if len(clientEntity.GPUs) > 0 {
-		gpusBytes, err := json.Marshal(clientEntity.GPUs)
-		if err != nil {
-			return err
-		}
-
-		clientEntity.GPUsJSON = string(gpusBytes)
+	gpusBytes, err := json.Marshal(clientEntity.GPUs)
+	if err != nil {
+		return err
 	}
 
-	if len(clientEntity.ChunkPositions) > 0 {
-		chunksBytes, err := json.Marshal(clientEntity.ChunkPositions)
-		if err != nil {
-			return err
-		}
+	clientEntity.GPUsJSON = string(gpusBytes)
 
-		clientEntity.ChunksJSON = string(chunksBytes)
+	chunksBytes, err := json.Marshal(clientEntity.ChunkPositions)
+	if err != nil {
+		return err
 	}
+
+	clientEntity.ChunksJSON = string(chunksBytes)
 
 	return nil
 }
