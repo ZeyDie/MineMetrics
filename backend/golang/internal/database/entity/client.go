@@ -30,9 +30,8 @@ type ClientEntity struct {
 	Y int16
 	Z int16
 
-	GPUs           string `gorm:"type:json" json:"-"`
-	ChunkPositions string `gorm:"type:json" json:"-"`
-	GPUsStruct     []GPU  `gorm:"-" json:"gpus_struct"`
+	GPUs       string `gorm:"type:json" json:"-"`
+	GPUsStruct []GPU  `gorm:"-" json:"gpus_struct"`
 }
 
 type GPU struct {
