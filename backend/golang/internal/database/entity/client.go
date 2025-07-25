@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -9,28 +10,26 @@ type ClientEntity struct {
 	gorm.Model
 
 	UserID             uuid.UUID
-	OSBitness          int
+	OSBitness          int8
 	OSName             string
-	CPUThreads         int
-	CPUCores           int
+	CPUThreads         uint8
+	CPUCores           uint8
 	RAMTotal           uint64
 	RAMAvailable       uint64
-	FPS                int
-	ViewDistance       int
-	EntityCount        int
-	ParticleCount      int
+	FPS                uint16
+	ViewDistance       uint8
+	EntityCount        uint16
+	ParticleCount      uint32
 	DimensionNamespace string
 	DimensionPath      string
 
-	GPUs           []GPU           `gorm:"foreignKey:ClientEntityID"`
-	ChunkPositions []ChunkPosition `gorm:"foreignKey:ClientEntityID"`
+	GPUsJSON       string          `gorm:"type:json"`
+	ChunksJSON     string          `gorm:"type:json"`
+	GPUs           []GPU           `gorm:"-"`
+	ChunkPositions []ChunkPosition `gorm:"-"`
 }
 
 type GPU struct {
-	gorm.Model
-
-	ClientEntityID uint
-
 	Name        string
 	DeviceID    string
 	Vendor      string
@@ -39,10 +38,46 @@ type GPU struct {
 }
 
 type ChunkPosition struct {
-	gorm.Model
+	X int16
+	Z int16
+}
 
-	ClientEntityID uint
+func (clientEntity *ClientEntity) BeforeSave(transaction *gorm.DB) error {
+	if len(clientEntity.GPUs) > 0 {
+		gpusBytes, err := json.Marshal(clientEntity.GPUs)
+		if err != nil {
+			return err
+		}
 
-	X int
-	Z int
+		clientEntity.GPUsJSON = string(gpusBytes)
+	}
+
+	if len(clientEntity.ChunkPositions) > 0 {
+		chunksBytes, err := json.Marshal(clientEntity.ChunkPositions)
+		if err != nil {
+			return err
+		}
+
+		clientEntity.ChunksJSON = string(chunksBytes)
+	}
+
+	return nil
+}
+
+func (clientEntity *ClientEntity) AfterFind(transaction *gorm.DB) error {
+	if clientEntity.GPUsJSON != "" {
+		err := json.Unmarshal([]byte(clientEntity.GPUsJSON), &clientEntity.GPUs)
+		if err != nil {
+			return err
+		}
+	}
+
+	if clientEntity.ChunksJSON != "" {
+		err := json.Unmarshal([]byte(clientEntity.ChunksJSON), &clientEntity.ChunkPositions)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
